@@ -2,6 +2,10 @@ const { IncomingWebhook } = require('@slack/webhook');
 
 const SLACK_WEBHOOK_URL = ''; // Enter Your Slack Webhook URL here
 
+const MAP_TRIGGER_NAME_TO_URL = {
+  // Put the mapping table here. E.g. 'backend' => 'api.example.com',
+}
+
 const webhook = new IncomingWebhook(SLACK_WEBHOOK_URL);
 
 // subscribe is the main function called by Cloud Functions.
@@ -47,36 +51,47 @@ const createSlackMessage = (build) => {
   let buildCommit = build.substitutions.COMMIT_SHA || '';
   let branch = build.substitutions.BRANCH_NAME || '';
   let repoName = build.substitutions.REPO_NAME.split('_').pop() || ''; //Get repository name
+  let triggerName = build.substitutions.TRIGGER_NAME || '';
+
+  const attachments = [
+    {
+      title: 'View Build Logs',
+      title_link: build.logUrl,
+      fields: [
+        {
+          title: 'Status',
+          value: build.status,
+        },
+      ],
+    },
+    {
+      title: `Commit - ${buildCommit}`,
+      title_link: `https://github.com/reflektor-digital-inc/${repoName}/commits/${buildCommit}`, // Insert your Organization/Bitbucket/Github Url
+      fields: [
+        {
+          title: 'Branch',
+          value: branch,
+        },
+        {
+          title: 'Repository',
+          value: repoName,
+        },
+      ],
+    },
+  ];
+
+  if (MAP_TRIGGER_NAME_TO_URL.hasOwnProperty(triggerName)) {
+    attachments.push({
+      title: 'View Website',
+      title_link: MAP_TRIGGER_NAME_TO_URL[triggerName],
+    });
+  }
 
   let message = {
     text: `Build - \`${buildId}\``,
     mrkdwn: true,
-    attachments: [
-      {
-        title: 'View Build Logs',
-        title_link: build.logUrl,
-        fields: [
-          {
-            title: 'Status',
-            value: build.status,
-          },
-        ],
-      },
-      {
-        title: `Commit - ${buildCommit}`,
-        title_link: `https://github.com/reflektor-digital-inc/${repoName}/commits/${buildCommit}`, // Insert your Organization/Bitbucket/Github Url
-        fields: [
-          {
-            title: 'Branch',
-            value: branch,
-          },
-          {
-            title: 'Repository',
-            value: repoName,
-          },
-        ],
-      },
-    ],
+    attachments,
   };
+  
   return message;
 };
