@@ -46,7 +46,7 @@ const createSlackMessage = (build) => {
   let buildId = build.id || '';
   let buildCommit = build.substitutions.COMMIT_SHA || '';
   let branch = build.substitutions.BRANCH_NAME || '';
-  let repoName = build.source.repoSource.repoName.split('_').pop() || ''; //Get repository name
+  let repoName = build.substitutions.REPO_NAME.split('_').pop() || ''; //Get repository name
 
   let message = {
     text: `Build - \`${buildId}\``,
