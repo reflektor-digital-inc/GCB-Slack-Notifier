@@ -29,10 +29,10 @@ module.exports.subscribe = (message, context, callback) => {
   }
 
   // Send message to Slack.
-  const message = createSlackMessage(build);
+  const slackMessage = createSlackMessage(build);
 
   (async () => {
-    await webhook.send(message);
+    await webhook.send(slackMessage);
   })();
 };
 
