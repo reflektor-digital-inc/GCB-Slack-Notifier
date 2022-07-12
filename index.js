@@ -5,8 +5,8 @@ const SLACK_WEBHOOK_URL = ''; // Enter Your Slack Webhook URL here
 const webhook = new IncomingWebhook(SLACK_WEBHOOK_URL);
 
 // subscribe is the main function called by Cloud Functions.
-module.exports.subscribe = (event, callback) => {
-  const build = eventToBuild(event.data);
+module.exports.subscribe = (message, context, callback) => {
+  const build = messageToBuild(message.data);
 
   // Skip if the current status is not in the status list.
   // Add additional statues to list if you'd like:
@@ -22,7 +22,10 @@ module.exports.subscribe = (event, callback) => {
   ];
 
   if (status.indexOf(build.status) === -1) {
-    return callback();
+    if (typeof callback === 'function') {
+      return callback();
+    }
+    return;
   }
 
   // Send message to Slack.
@@ -34,7 +37,7 @@ module.exports.subscribe = (event, callback) => {
 };
 
 // eventToBuild transforms pubsub event message to a build object.
-const eventToBuild = (data) => {
+const messageToBuild = (data) => {
   return JSON.parse(Buffer.from(data, 'base64').toString());
 };
 
@@ -61,7 +64,7 @@ const createSlackMessage = (build) => {
       },
       {
         title: `Commit - ${buildCommit}`,
-        title_link: `https://bitbucket.org/<ORGANIZATION-NAME>/${repoName}/commits/${buildCommit}`, // Insert your Organization/Bitbucket/Github Url
+        title_link: `https://github.com/reflektor-digital-inc/${repoName}/commits/${buildCommit}`, // Insert your Organization/Bitbucket/Github Url
         fields: [
           {
             title: 'Branch',
