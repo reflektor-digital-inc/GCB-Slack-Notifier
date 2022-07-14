@@ -12,7 +12,7 @@ const MAP_TRIGGER_NAME_TO_URL = {
 const webhook = new IncomingWebhook(SLACK_WEBHOOK_URL);
 
 // subscribe is the main function called by Cloud Functions.
-module.exports.subscribe = (message, context, callback) => {
+module.exports.subscribe = async (message, context, callback) => {
   const build = messageToBuild(message.data);
 
   // Skip if the current status is not in the status list.
@@ -35,7 +35,7 @@ module.exports.subscribe = (message, context, callback) => {
   }
 
   // Send message to Slack.
-  const slackMessage = createSlackMessage(build);
+  const slackMessage = await createSlackMessage(build);
 
   (async () => {
     await webhook.send(slackMessage);
@@ -48,7 +48,7 @@ const messageToBuild = (data) => {
 };
 
 // createSlackMessage create a message from a build object.
-const createSlackMessage = (build) => {
+const createSlackMessage = async (build) => {
   let buildId = build.id || '';
   let projectId = build.projectId || '';
   let buildCommit = build.substitutions.COMMIT_SHA || '';
@@ -60,7 +60,7 @@ const createSlackMessage = (build) => {
   let commitAuthor = '';
 
   // Get the commit message using GitHub API
-  axios.get(
+  await axios.get(
     `https://api.github.com/repos/reflektor-digital-inc/${repoName}/git/commits/${buildCommit}`,
     {
       headers: {
