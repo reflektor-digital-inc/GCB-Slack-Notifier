@@ -1,6 +1,9 @@
+const axios = require('axios');
 const { IncomingWebhook } = require('@slack/webhook');
 
 const SLACK_WEBHOOK_URL = ''; // Enter Your Slack Webhook URL here
+
+const GITHUB_ACCESS_TOKEN = ''; // Enter Your GitHub Access Token here
 
 const MAP_TRIGGER_NAME_TO_URL = {
   // Put the mapping table here. E.g. 'backend' => 'api.example.com',
@@ -53,6 +56,26 @@ const createSlackMessage = (build) => {
   let repoName = build.substitutions.REPO_NAME.split('_').pop() || ''; //Get repository name
   let triggerName = build.substitutions.TRIGGER_NAME || '';
 
+  let commitMessage = '';
+  let commitAuthor = '';
+
+  // Get the commit message using GitHub API
+  axios.get(
+    `https://api.github.com/repos/reflektor-digital-inc/${repoName}/git/commits/${buildCommit}`,
+    {
+      headers: {
+        'Accept': 'application/vnd.github+json',
+        'Authorization': `token ${GITHUB_ACCESS_TOKEN}`,
+      },
+    },
+  ).then((response) => {
+    commitMessage = response.data.message;
+    commitAuthor = response.data.author.name;
+  }).catch((error) => {
+    console.error(error);
+    commitMessage = '[ERROR WHILE FETCJING COMMIT INFO]';
+  });
+
   const attachments = [
     {
       title: 'View Build Logs',
@@ -66,12 +89,24 @@ const createSlackMessage = (build) => {
           title: 'Environment',
           value: `\`${projectId}\``,
         },
+        {
+          title: 'Trigger',
+          value: `\`${triggerName}\``,
+        },
       ],
     },
     {
       title: `Commit - ${buildCommit}`,
       title_link: `https://github.com/reflektor-digital-inc/${repoName}/commit/${buildCommit}`, // Insert your Organization/Bitbucket/Github Url
       fields: [
+        {
+          title: 'Message',
+          value: `*${commitMessage}*`,
+        },
+        {
+          title: 'Author',
+          value: commitAuthor,
+        },
         {
           title: 'Branch',
           value: branch,
