@@ -47,11 +47,11 @@ const messageToBuild = (data) => {
 // createSlackMessage create a message from a build object.
 const createSlackMessage = (build) => {
   let buildId = build.id || '';
+  let projectId = build.projectId || '';
   let buildCommit = build.substitutions.COMMIT_SHA || '';
   let branch = build.substitutions.BRANCH_NAME || '';
   let repoName = build.substitutions.REPO_NAME.split('_').pop() || ''; //Get repository name
   let triggerName = build.substitutions.TRIGGER_NAME || '';
-  let projectId = build.substitutions.PROJECT_ID || '';
 
   const attachments = [
     {
