@@ -70,7 +70,7 @@ const createSlackMessage = (build) => {
     },
     {
       title: `Commit - ${buildCommit}`,
-      title_link: `https://github.com/reflektor-digital-inc/${repoName}/commits/${buildCommit}`, // Insert your Organization/Bitbucket/Github Url
+      title_link: `https://github.com/reflektor-digital-inc/${repoName}/commit/${buildCommit}`, // Insert your Organization/Bitbucket/Github Url
       fields: [
         {
           title: 'Branch',
