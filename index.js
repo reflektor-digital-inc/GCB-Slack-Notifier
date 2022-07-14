@@ -14,14 +14,13 @@ module.exports.subscribe = (message, context, callback) => {
 
   // Skip if the current status is not in the status list.
   // Add additional statues to list if you'd like:
-  // QUEUED, WORKING, SUCCESS, FAILURE,
-  // INTERNAL_ERROR, TIMEOUT, CANCELLED
+  // SUCCESS, FAILURE, INTERNAL_ERROR
+  // TIMEOUT, CANCELLED
   const status = [
     'SUCCESS',
     'FAILURE',
     'INTERNAL_ERROR',
     'TIMEOUT',
-    'QUEUED',
     'CANCELLED',
   ];
 
