@@ -1,13 +1,12 @@
 const axios = require('axios');
 const { IncomingWebhook } = require('@slack/webhook');
+const config = require('./config.json');
 
-const SLACK_WEBHOOK_URL = ''; // Enter Your Slack Webhook URL here
+const SLACK_WEBHOOK_URL = config.slack_webhook_url;
 
-const GITHUB_ACCESS_TOKEN = ''; // Enter Your GitHub Access Token here
+const GITHUB_ACCESS_TOKEN = config.github_access_token;
 
-const MAP_TRIGGER_NAME_TO_URL = {
-  // Put the mapping table here. E.g. 'backend' => 'api.example.com',
-}
+const MAP_TRIGGER_NAME_TO_URL = config.trigger_name_to_url_mapping;
 
 const webhook = new IncomingWebhook(SLACK_WEBHOOK_URL);
 
