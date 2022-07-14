@@ -51,6 +51,7 @@ const createSlackMessage = (build) => {
   let branch = build.substitutions.BRANCH_NAME || '';
   let repoName = build.substitutions.REPO_NAME.split('_').pop() || ''; //Get repository name
   let triggerName = build.substitutions.TRIGGER_NAME || '';
+  let projectId = build.substitutions.PROJECT_ID || '';
 
   const attachments = [
     {
@@ -60,6 +61,10 @@ const createSlackMessage = (build) => {
         {
           title: 'Status',
           value: build.status,
+        },
+        {
+          title: 'Environment',
+          value: `\`${projectId}\``,
         },
       ],
     },
