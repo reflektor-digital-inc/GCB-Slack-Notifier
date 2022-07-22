@@ -2,11 +2,18 @@ const axios = require('axios');
 const { IncomingWebhook } = require('@slack/webhook');
 const config = require('./config.json');
 
-const SLACK_WEBHOOK_URL = config.slack_webhook_url;
+const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL || config.slack_webhook_url;
 
-const GITHUB_ACCESS_TOKEN = config.github_access_token;
+const GITHUB_ACCESS_TOKEN = process.env.GITHUB_ACCESS_TOKEN || config.github_access_token;
 
-const MAP_TRIGGER_NAME_TO_URL = config.trigger_name_to_url_mapping;
+let MAP_TRIGGER_NAME_TO_URL = {};
+if (process.env.MAP_TRIGGER_NAME_TO_URL) {
+  try {
+    MAP_TRIGGER_NAME_TO_URL = JSON.parse(process.env.MAP_TRIGGER_NAME_TO_URL);
+  } catch {
+    MAP_TRIGGER_NAME_TO_URL = config.trigger_name_to_url_mapping;
+  }
+}
 
 const webhook = new IncomingWebhook(SLACK_WEBHOOK_URL);
 
