@@ -2,7 +2,7 @@
   "name": "google-container-slack",
   "version": "0.0.1",
   "description": "Slack integration for Google Cloud Build, using Google Cloud Functions",
-  "main": "index.js",
+  "main": "function.js",
   "dependencies": {
     "@slack/webhook": "6.0.0",
     "axios": "^0.27.2"
